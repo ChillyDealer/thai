@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DJT THAI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="icon"
+        href="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Flag_of_Thailand.svg/640px-Flag_of_Thailand.svg.png"
+        type="image/png">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            text-align: center;
+            padding: 40px;
+            background-color: #fffffe;
+            color: #094067;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+        }
+
+        p {
+            font-size: 1.4rem;
+        }
+
+        /* thai cards */
+        .char-box {
+            width: 220px;
+            height: 220px;
+            font-size: 5.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 30px auto;
+            border-radius: 15px;
+            background-color: #3da9fc;
+            color: #fffffe;
+            border: 4px solid #094067;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        input#answerInput {
+            font-size: 1.5rem;
+            padding: 12px;
+            border: 2px solid #094067;
+            border-radius: 8px;
+            text-align: center;
+            width: 50%;
+            max-width: 400px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        /* thai cards */
+        .char-card {
+            padding: 20px;
+            border: 2px solid #094067;
+            text-align: center;
+            font-size: 2.2rem;
+            border-radius: 8px;
+            background-color: #3da9fc;
+            color: #fffffe;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-weight: bold;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .char-translit {
+            font-size: 2rem;
+            color: #ffffff;
+            margin-top: 5px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        /* switch */
+        .toggle-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.4rem;
+            font-weight: 500;
+        }
+
+        .toggle input {
+            appearance: none;
+            width: 50px;
+            height: 24px;
+            background: #094067;
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            outline: none;
+            transition: background 0.3s ease;
+        }
+
+        .toggle input:checked {
+            background: #3da9fc;
+        }
+
+        .toggle input::before {
+            content: "";
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: #fffffe;
+            border-radius: 50%;
+            top: 3px;
+            left: 4px;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle input:checked::before {
+            transform: translateX(26px);
+        }
+    </style>
+
+<body class="container">
+    <h1>THAI ALPHABET IN DJT FORM</h1>
+    <p>I HAVE TO LEARN THE THAI ALPHABET BEFORE MONNI !!!! I NEEEDDDDD ITTT</p>
+    <br>
+    <div id="charBox" class="char-box">?</div>
+    <br />
+
+    <input type="text" id="answerInput" class="form-control mx-auto my-2" placeholder="....." oninput="validateAnswer()"
+        onkeydown="handleKey(event)" />
+    <p id="feedback"></p>
+    <br />
+
+    <!-- buttons -->
+    <div class="toggle-container">
+        <label class="toggle">
+            <input type="checkbox" id="consonantsCheck" checked>
+            Consonants
+        </label>
+        <label class="toggle">
+            <input type="checkbox" id="vowelsCheck" checked>
+            Vowels
+        </label>
+        <label class="toggle">
+            <input type="checkbox" id="tonesCheck" checked>
+            Tone Marks
+        </label>
+    </div>
+
+    <!-- display sections -->
+    <br>
+    <h2>Thai Consonants</h2>
+    <div class="grid" id="consonantsGrid"></div>
+    <br><br>
+    <h2>Thai Vowels</h2>
+    <div class="grid" id="vowelsGrid"></div>
+    <br><br>
+    <h2>Thai Tone Marks</h2>
+    <div class="grid" id="tonesGrid"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // thai alphabet data
+            const thaiData = {
+                consonants: {
+                    ก: ["g", "goor-gai"],
+                    ข: ["kh", "khoor-khai"],
+                    ฃ: ["kh", "khoor-khuad"],
+                    ค: ["kh", "khoor-khwaai"],
+                    ฅ: ["kh", "khoor-khon"],
+                    ฆ: ["kh", "khoor-ra-khang"],
+                    ง: ["ng", "ngoor-nguu"],
+                    จ: ["j", "joor-jaan"],
+                    ฉ: ["ch", "choor-ching"],
+                    ช: ["ch", "choor-chaang"],
+                    ซ: ["s", "soor-soo"],
+                    ฌ: ["ch", "choor-cheer"],
+                    ญ: ["y", "yoor-ying"],
+                    ฎ: ["d", "door-cha-daa"],
+                    ฏ: ["dt", "dtoor-bpa-dtak"],
+                    ฐ: ["t", "toor-taan"],
+                    ฑ: ["t", "toor-mon-too"],
+                    ฒ: ["t", "toor-puu-tao"],
+                    ณ: ["n", "noor-naen"],
+                    ด: ["d", "door-dek"],
+                    ต: ["dt", "dtoor-dtao"],
+                    ถ: ["th", "thoor-thung"],
+                    ท: ["t", "toor-ta-haan"],
+                    ธ: ["t", "toor-tong"],
+                    น: ["n", "noor-nuu"],
+                    บ: ["b", "boor-bai-mai"],
+                    ป: ["bp", "bpoor-bplaa"],
+                    ผ: ["p", "poor-pueng"],
+                    ฝ: ["f", "foor-faa"],
+                    พ: ["p", "poor-paan"],
+                    ฟ: ["f", "foor-faa"],
+                    ภ: ["p", "poor-sam-pao"],
+                    ม: ["m", "moor-maa"],
+                    ย: ["y", "yoor-yak"],
+                    ร: ["r", "roor-ruea"],
+                    ล: ["l", "loor-ling"],
+                    ว: ["w", "woor-waen"],
+                    ศ: ["s", "soor-saa-laa"],
+                    ษ: ["s", "soor-rue-sii"],
+                    ส: ["s", "soor-suea"],
+                    ห: ["h", "hoor-hiib"],
+                    ฬ: ["l", "loor-ju-laa"],
+                    อ: ["o", "silent"],  // Silent glottal stop (not "o")
+                    ฮ: ["h", "hoor-nok-huuk"],
+                },
+                vowels: {
+                    ะ: "a",
+                    "ั": "a",
+                    า: "aa",
+                    ำ: "am",
+                    "ิ": "i",
+                    "ี": "ii",
+                    "ึ": "ue",
+                    "ื": "ue",
+                    "ุ": "u",
+                    "ู": "uu",
+                    เ: "e",
+                    แ: "ae",
+                    โ: "o",
+                    ใ: "ai",
+                    ไ: "ai",
+                    ฤ: "ri",
+                    ฦ: "li",
+                    อึ: "ue",
+                    อื: "ue",
+
+                    "เ◌ะ": "e",
+                    "เ◌็◌": "e",
+                    "แ◌ะ": "ae",
+                    "แ◌็◌": "ae",
+                    "โ◌ะ": "o",
+                    "เ◌าะ": "o",
+                    "เ◌อะ": "ə",
+                    "เ◌อ": "ə̄",
+                    "เ◌ีย": "ia",
+                    "เ◌ือ": "uea",
+                    "◌ัว": "ua",
+                    "◌ัวะ": "ua",
+                    "เ◌า": "ao",
+                    "เ◌็ว": "eo",
+                    "แ◌็ว": "aeo",
+                    "◌ิว": "iw",
+                    "เ◌ียว": "iao",
+                    "เ◌ือะ": "uea",
+                    "เ◌ือย": "ueai",
+                    "◌ุย": "ui",
+                    "เ◌ย": "oei",
+                    "◌อย": "oi",
+                    "โ◌ย": "oi",
+                    "◌วย": "uai",
+                },
+                toneMarks: {
+                    "่": "low",
+                    "้": "falling",
+                    "๊": "high",
+                    "๋": "rising",
+                },
+            };
+
+            let currentChar = "";
+            let currentAnswers = [];
+            let currentStep = 1; // 1 = letter, 2 = name (for consonants)
+
+            // get random number
+            function getRandomProperty(obj) {
+                const keys = Object.keys(obj);
+                return keys[Math.floor(Math.random() * keys.length)];
+            }
+
+            function displayNextCharacter() {
+                let pool = {}; // character pool
+                if (document.getElementById("consonantsCheck").checked)
+                    Object.assign(pool, thaiData.consonants);
+                if (document.getElementById("vowelsCheck").checked)
+                    Object.assign(pool, thaiData.vowels);
+                if (document.getElementById("tonesCheck").checked)
+                    Object.assign(pool, thaiData.toneMarks);
+
+                if (Object.keys(pool).length === 0) {
+                    document.getElementById("charBox").innerText = "[!]";
+                    return;
+                }
+
+                currentChar = getRandomProperty(pool); // choose random from pool
+                currentAnswers = Array.isArray(pool[currentChar]) ? pool[currentChar] : [pool[currentChar]];
+                currentStep = 1; // reset to step 1
+
+                document.getElementById("charBox").innerText = currentChar;
+                document.getElementById("answerInput").value = "";
+                document.getElementById("feedback").innerText = "";
+                document.getElementById("answerInput").disabled = false; // Enable input field
+            }
+
+            // for checking the input
+            function validateAnswer() {
+                const userInput = document.getElementById("answerInput").value.trim().toLowerCase();
+
+                if (currentStep === 1) {
+                    // step 1: check for letter
+                    if (userInput === currentAnswers[0]) {
+                        if (thaiData.consonants[currentChar]) {
+                            // change step to 2 for consonants
+                            currentStep = 2;
+                            document.getElementById("answerInput").disabled = true;
+                            setTimeout(() => {
+                                document.getElementById("answerInput").disabled = false;
+                                document.getElementById("answerInput").focus();
+                            }, 500);
+                            currentStep = 2;
+                            document.getElementById("answerInput").value = "";
+                            document.getElementById("feedback").innerText = "Correct! Now type the name of the character.";
+                            document.getElementById("feedback").style.color = "blue";
+                        } else {
+                            // vowel/tone no steps
+                            document.getElementById("feedback").innerText = "Correct!";
+                            document.getElementById("feedback").style.color = "green";
+                            document.getElementById("answerInput").disabled = true; // disable
+                            setTimeout(() => {
+                                displayNextCharacter();
+                                document.getElementById("answerInput").disabled = false; // enable
+                                document.getElementById("answerInput").focus(); // refocus
+                            }, 500);
+                        }
+                    } else if (!currentAnswers[0].startsWith(userInput)) {
+                        // wrong name, show correct and skip
+                        document.getElementById("feedback").innerText = `Wrong: ${currentAnswers[0]} (${currentChar})`;
+                        document.getElementById("feedback").style.color = "red";
+                        document.getElementById("answerInput").disabled = true; // disable
+                        setTimeout(() => {
+                            displayNextCharacter();
+                            document.getElementById("answerInput").disabled = false; // enable input field
+                            document.getElementById("answerInput").focus(); // refocus
+                        }, 500);
+                    }
+                } else if (currentStep === 2) {
+                    // step 2: full name
+                    if (userInput === currentAnswers[1]) {
+                        document.getElementById("feedback").innerText = "Correct!";
+                        document.getElementById("feedback").style.color = "green";
+                        document.getElementById("answerInput").disabled = true; // disable
+                        setTimeout(() => {
+                            displayNextCharacter();
+                            document.getElementById("answerInput").disabled = false; // enable input
+                            document.getElementById("answerInput").focus(); // refocus
+                        }, 500);
+                    } else if (!currentAnswers[1].startsWith(userInput)) {
+                        // wrong name, show correct and skip
+                        document.getElementById("feedback").innerText = `Wrong: ${currentAnswers[1]} (${currentChar})`;
+                        document.getElementById("feedback").style.color = "red";
+                        document.getElementById("answerInput").disabled = true; // disable
+                        setTimeout(() => {
+                            displayNextCharacter();
+                            document.getElementById("answerInput").disabled = false; // enable input field
+                            document.getElementById("answerInput").focus(); // refocus
+                        }, 500);
+                    }
+                }
+            }
+
+            function handleKey(event) {
+                if (event.key === "Enter") {
+                    validateAnswer();
+                }
+            }
+
+            // display
+            function populateGrid(gridId, dataset) {
+                let grid = document.getElementById(gridId);
+                grid.innerHTML = "";
+
+                for (let char in dataset) {
+                    let div = document.createElement("div");
+                    div.classList.add("char-card");
+
+                    let charElement = document.createElement("div");
+                    charElement.innerText = char;
+
+                    let transliteration = document.createElement("p");
+                    let fullName = document.createElement("p");
+
+                    if (Array.isArray(dataset[char])) {
+                        transliteration.innerText = dataset[char][0];
+                        fullName.innerText = dataset[char][1];
+                    } else {
+                        transliteration.innerText = dataset[char];
+                        fullName.innerText = "";
+                    }
+
+                    transliteration.classList.add("char-translit");
+
+                    fullName.style.fontSize = "0.8rem";
+                    fullName.style.color = "#eaecee";
+
+                    div.appendChild(charElement);
+                    div.appendChild(transliteration);
+                    if (fullName.innerText !== "") {
+                        div.appendChild(fullName);
+                    }
+                    grid.appendChild(div);
+                }
+            }
+
+            // event listeners
+            document.getElementById("answerInput").addEventListener("input", validateAnswer);
+            document.getElementById("answerInput").addEventListener("keydown", handleKey);
+
+            // insert data to grid
+            populateGrid("consonantsGrid", thaiData.consonants);
+            populateGrid("vowelsGrid", thaiData.vowels);
+            populateGrid("tonesGrid", thaiData.toneMarks);
+
+            displayNextCharacter();
+        });
+    </script>
+</body>
+
+</html>
